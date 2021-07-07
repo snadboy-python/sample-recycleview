@@ -1,0 +1,45 @@
+#:import RGBA kivy.utils.rgba
+
+# Defines single row of RecycleView (viewclass)
+<Row@BoxLayout>:
+    # these properties will be populated from the associated 
+    #   data element of app.data when this viewclass is instantiated
+    text: ''
+    rv_key: 0
+    is_active: False
+
+    CheckBox:
+        active: root.is_active
+
+        # when checkbox clicked (ie, active state changed)
+        #   for changes to be persisted, the associated data element of app.data must be updated
+        #   root's properties are discarded when scrolling
+        on_active: app.data[root.rv_key]['is_active'] = self.active
+
+    Label:
+        text: root.text
+
+FloatLayout:
+    RecycleView:
+        # source of list data
+        data: app.data
+
+        # the viewclass to use for each element in RecycleView
+        #   an instance of viewclass is created for each row that becomes visible
+        #   when the row scrolls out of view, the viewclass instance is abandonded
+        viewclass: 'Row'
+
+        size_hint: .8, .8
+        pos_hint: {'center': (.5, .5)}
+        canvas.before:
+            Color:
+                rgba: RGBA('#212121')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            size: self.minimum_size
+            size_hint_y: None
+            default_size_hint: 1, None
+            default_size: 0, 50
